@@ -4,3 +4,4 @@ user=system seinfo=platform isPrivApp=true name=com.android.dcdimming    domain=
 user=system seinfo=platform isPrivApp=true name=com.android.kprofiles    domain=parts_app type=system_app_data_file levelFrom=all
 user=system seinfo=platform isPrivApp=true name=com.android.panelorientation domain=parts_app type=system_app_data_file levelFrom=all
 user=system seinfo=platform isPrivApp=true name=com.android.touchsamplingrate domain=parts_app type=system_app_data_file levelFrom=all
+user=system seinfo=platform isPrivApp=true name=com.android.thermal      domain=parts_app type=system_app_data_file levelFrom=all

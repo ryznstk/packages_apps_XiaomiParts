@@ -1,0 +1,38 @@
+//
+// Copyright (C) 2020 The LineageOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+//
+
+android_app {
+    name: "ThermalProfiles",
+    defaults: [
+        "SettingsLibDefaults",
+    ],
+
+    srcs: [
+        "src/**/*.java"
+    ],
+
+    certificate: "platform",
+    resource_dirs: ["res"],
+    platform_apis: true,
+    system_ext_specific: true,
+    privileged: true,
+
+    static_libs: [
+        "androidx.core_core",
+        "androidx.preference_preference",
+    ],
+
+    required: [
+        "privapp_whitelist_com.android.thermal.xml",
+    ],
+}
+
+prebuilt_etc {
+    name: "privapp_whitelist_com.android.thermal.xml",
+    src: "permissions/privapp_whitelist_com.android.thermal.xml",
+    sub_dir: "permissions",
+    system_ext_specific: true,
+}
