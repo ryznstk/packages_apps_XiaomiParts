@@ -6,6 +6,7 @@
 
 android_app {
     name: "ThermalProfiles",
+    init_rc: ["init/init.thermal.rc"],
     defaults: [
         "SettingsLibDefaults",
     ],
