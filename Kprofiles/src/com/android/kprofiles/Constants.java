@@ -12,6 +12,9 @@ public class Constants {
     /* Broadcast action sent when kprofiles mode changes */
     public static final String ACTION_KPROFILE_SETTING_CHANGED = "com.android.kprofiles.battery.KPROFILE_CHANGED";
 
+    /* Per-app Kprofiles */
+    public static final String KEY_PER_APP_KPROFILES_DISABLED_PACKAGES = "per_app_kprofiles_disabled_packages"; // StringSet
+
     private Constants() {
         // utility class
     }

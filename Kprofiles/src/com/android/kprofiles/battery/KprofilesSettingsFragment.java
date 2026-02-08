@@ -86,6 +86,18 @@ public class KprofilesSettingsFragment extends SettingsBasePreferenceFragment im
         }
         kProfilesModesInfo = (Preference) findPreference(KPROFILES_MODES_INFO);
         kProfilesModesInfo.setEnabled(IS_SUPPORTED);
+        Preference perApp = findPreference("per_app_kprofiles_manage");
+        if (perApp != null) {
+            perApp.setOnPreferenceClickListener(pref -> {
+                try {
+                    Intent intent = new Intent(getContext(), Class.forName("com.android.kprofiles.PerAppKprofilesActivity"));
+                    startActivity(intent);
+                } catch (Exception e) {
+                    // ignore - activity may be missing in some builds
+                }
+                return true;
+            });
+        }
         // Set footer title dynamically instead of using formatting marker in XML
         if (IS_SUPPORTED) {
             final String value = FileUtils.readOneLine(KPROFILES_MODES_NODE);
@@ -136,7 +148,9 @@ public class KprofilesSettingsFragment extends SettingsBasePreferenceFragment im
                 final boolean enabled = (Boolean) newValue;
                 try {
                     FileUtils.writeLine(KPROFILES_AUTO_NODE, enabled ? ON : OFF);
-                } catch(Exception e) { }
+                } catch(Exception e) {
+                    // ignore write failures
+                }
                 break;
             case KPROFILES_MODES_KEY:
                 final String value = (String) newValue;
@@ -147,7 +161,12 @@ public class KprofilesSettingsFragment extends SettingsBasePreferenceFragment im
                     Intent intent = new Intent(INTENT_ACTION);
                     intent.setFlags(Intent.FLAG_RECEIVER_REGISTERED_ONLY);
                     getContext().sendBroadcastAsUser(intent, UserHandle.CURRENT);
-                } catch(Exception e) { }
+                } catch(Exception e) {
+                    // ignore send/write failures
+                }
+                break;
+            default:
+                // no-op for unknown keys
                 break;
         }
         return true;
@@ -187,11 +206,8 @@ public class KprofilesSettingsFragment extends SettingsBasePreferenceFragment im
     }
 
     private void updateTitle(String value) {
-        Handler.getMain().post(() -> {
-            kProfilesModesInfo.setTitle(
-                String.format(getString(R.string.kprofiles_modes_description),
-                    modesDesc(value)));
-        });
+    Handler.getMain().post(() -> kProfilesModesInfo.setTitle(
+        String.format(getString(R.string.kprofiles_modes_description), modesDesc(value))));
     }
 
     private void updateValues() {
