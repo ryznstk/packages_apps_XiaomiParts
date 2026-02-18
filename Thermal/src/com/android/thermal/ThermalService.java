@@ -40,8 +40,14 @@ public class ThermalService extends Service {
     private BroadcastReceiver mIntentReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            mPreviousApp = "";
-            mThermalUtils.setDefaultThermalProfile();
+            String action = intent.getAction();
+            if (Intent.ACTION_SCREEN_OFF.equals(action)) {
+                mThermalUtils.setDefaultThermalProfile();
+            } else if (Intent.ACTION_SCREEN_ON.equals(action)) {
+                // Re-apply profile for the current foreground app
+                mPreviousApp = "";
+                onForegroundAppChanged();
+            }
         }
     };
 
@@ -85,23 +91,7 @@ public class ThermalService extends Service {
         TaskStackListener taskListener = new TaskStackListener() {
             @Override
             public void onTaskStackChanged() {
-                try {
-                    ActivityManager am = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-                    if (am == null) return;
-                    List<ActivityManager.RunningTaskInfo> tasks = am.getRunningTasks(1);
-                    if (tasks != null && !tasks.isEmpty()) {
-                        ComponentName topActivity = tasks.get(0).topActivity;
-                        if (topActivity != null) {
-                            String foregroundApp = topActivity.getPackageName();
-                            if (!foregroundApp.equals(mPreviousApp)) {
-                                mThermalUtils.setThermalProfile(foregroundApp);
-                                mPreviousApp = foregroundApp;
-                            }
-                        }
-                    }
-                } catch (Exception e) {
-                    // ignore task query failures
-                }
+                onForegroundAppChanged();
             }
         };
 
@@ -109,6 +99,26 @@ public class ThermalService extends Service {
             am.registerTaskStackListener(taskListener);
         } catch (Exception e) {
             Log.e(TAG, "Failed to register task stack listener", e);
+        }
+    }
+
+    private void onForegroundAppChanged() {
+        try {
+            ActivityManager am = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+            if (am == null) return;
+            List<ActivityManager.RunningTaskInfo> tasks = am.getRunningTasks(1);
+            if (tasks != null && !tasks.isEmpty()) {
+                ComponentName topActivity = tasks.get(0).topActivity;
+                if (topActivity != null) {
+                    String foregroundApp = topActivity.getPackageName();
+                    if (!foregroundApp.equals(mPreviousApp)) {
+                        mThermalUtils.setThermalProfile(foregroundApp);
+                        mPreviousApp = foregroundApp;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            // ignore task query failures
         }
     }
 }
