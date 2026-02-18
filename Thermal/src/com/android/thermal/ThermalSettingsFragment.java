@@ -377,6 +377,8 @@ public class ThermalSettingsFragment extends Fragment
             int currentState = mThermalUtils.getStateForPackage(entry.info.packageName);
             if (currentState != position) {
                 mThermalUtils.writePackage(entry.info.packageName, position);
+                // Apply immediately if this package is currently in foreground
+                mThermalUtils.applyIfForeground(entry.info.packageName);
                 notifyDataSetChanged();
             }
         }

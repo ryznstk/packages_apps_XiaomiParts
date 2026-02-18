@@ -17,6 +17,8 @@
 package com.android.thermal;
 
 import android.app.ActivityManager;
+import android.app.ActivityTaskManager;
+import android.app.IActivityTaskManager;
 import android.app.Service;
 import android.app.TaskStackListener;
 import android.content.BroadcastReceiver;
@@ -24,6 +26,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.BatteryManager;
 import android.os.IBinder;
 import android.util.Log;
 
@@ -42,7 +45,11 @@ public class ThermalService extends Service {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             if (Intent.ACTION_SCREEN_OFF.equals(action)) {
-                mThermalUtils.setDefaultThermalProfile();
+                if (isCharging()) {
+                    mThermalUtils.setChargingThermalProfile();
+                } else {
+                    mThermalUtils.setDefaultThermalProfile();
+                }
             } else if (Intent.ACTION_SCREEN_ON.equals(action)) {
                 // Re-apply profile for the current foreground app
                 mPreviousApp = "";
@@ -85,9 +92,6 @@ public class ThermalService extends Service {
     }
 
     private void registerTaskStackListener() {
-        ActivityManager am = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-        if (am == null) return;
-
         TaskStackListener taskListener = new TaskStackListener() {
             @Override
             public void onTaskStackChanged() {
@@ -96,7 +100,8 @@ public class ThermalService extends Service {
         };
 
         try {
-            am.registerTaskStackListener(taskListener);
+            IActivityTaskManager atm = ActivityTaskManager.getService();
+            atm.registerTaskStackListener(taskListener);
         } catch (Exception e) {
             Log.e(TAG, "Failed to register task stack listener", e);
         }
@@ -120,5 +125,13 @@ public class ThermalService extends Service {
         } catch (Exception e) {
             // ignore task query failures
         }
+    }
+
+    private boolean isCharging() {
+        Intent status = registerReceiver(null,
+                new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+        if (status == null) return false;
+        int plugged = status.getIntExtra(BatteryManager.EXTRA_PLUGGED, 0);
+        return plugged != 0;
     }
 }

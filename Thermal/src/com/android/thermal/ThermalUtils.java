@@ -197,6 +197,7 @@ public final class ThermalUtils {
         "com.sandboxol.blockymods",              // Sandbox
     };
 
+    private Context mContext;
     private SharedPreferences mSharedPrefs;
 
     protected ThermalUtils(Context context) {
@@ -286,6 +287,32 @@ public final class ThermalUtils {
 
     protected void setDefaultThermalProfile() {
         FileUtils.writeLine(THERMAL_SCONFIG, SCONFIG_DEFAULT);
+    }
+
+    protected void setChargingThermalProfile() {
+        FileUtils.writeLine(THERMAL_SCONFIG, SCONFIG_CHARGE);
+    }
+
+    /**
+     * If the given package is currently in the foreground, apply its thermal profile immediately.
+     * Called after the user manually assigns a profile in the UI.
+     */
+    protected void applyIfForeground(String packageName) {
+        try {
+            android.app.ActivityManager am = (android.app.ActivityManager)
+                    mContext.getSystemService(android.content.Context.ACTIVITY_SERVICE);
+            if (am == null) return;
+            java.util.List<android.app.ActivityManager.RunningTaskInfo> tasks =
+                    am.getRunningTasks(1);
+            if (tasks != null && !tasks.isEmpty()) {
+                android.content.ComponentName top = tasks.get(0).topActivity;
+                if (top != null && packageName.equals(top.getPackageName())) {
+                    setThermalProfile(packageName);
+                }
+            }
+        } catch (Exception e) {
+            // ignore
+        }
     }
 
     protected void setThermalProfile(String packageName) {

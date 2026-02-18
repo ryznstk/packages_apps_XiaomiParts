@@ -31,6 +31,8 @@ public class ThermalActivity extends CollapsingToolbarBaseActivity {
         super.onCreate(savedInstanceState);
 
         if (FileUtils.fileExists(THERMAL_SCONFIG)) {
+            // Ensure service is running (in case it wasn't started at boot)
+            ThermalUtils.startService(this);
             getSupportFragmentManager().beginTransaction()
                     .replace(com.android.settingslib.collapsingtoolbar.R.id.content_frame,
                             new ThermalSettingsFragment(), TAG_THERMAL)
