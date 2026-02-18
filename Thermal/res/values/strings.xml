@@ -18,7 +18,7 @@
 
     <!-- Thermal Profiles -->
     <string name="thermal_title">Thermal Profiles</string>
-    <string name="thermal_summary">Adjust per-app thermal profiles for optimum performance</string>
+    <string name="thermal_summary">Per-app thermal profiles with automatic detection</string>
     <string name="thermal_default">Default</string>
     <string name="thermal_gaming_heavy">Gaming (Heavy)</string>
     <string name="thermal_gaming_medium">Gaming (Medium)</string>
@@ -31,5 +31,8 @@
     <string name="thermal_navigation">Navigation</string>
     <string name="thermal_phone">Phone Call</string>
     <string name="thermal_dialer">Media Streaming</string>
+    <string name="thermal_yuanshen">Genshin Impact</string>
+    <string name="thermal_highfps">High FPS</string>
+    <string name="thermal_charge">Charging</string>
 
 </resources>

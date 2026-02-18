@@ -207,6 +207,12 @@ public class ThermalSettingsFragment extends Fragment
                 return R.drawable.ic_thermal_dialer;
             case ThermalUtils.STATE_DIALER:
                 return R.drawable.ic_thermal_streaming;
+            case ThermalUtils.STATE_YUANSHEN:
+                return R.drawable.ic_thermal_gaming;
+            case ThermalUtils.STATE_HIGHFPS:
+                return R.drawable.ic_thermal_gaming;
+            case ThermalUtils.STATE_CHARGE:
+                return R.drawable.ic_thermal_charge;
             case ThermalUtils.STATE_DEFAULT:
             default:
                 return R.drawable.ic_thermal_default;
@@ -247,7 +253,10 @@ public class ThermalSettingsFragment extends Fragment
                 R.string.thermal_video_chat,
                 R.string.thermal_navigation,
                 R.string.thermal_phone,
-                R.string.thermal_dialer
+                R.string.thermal_dialer,
+                R.string.thermal_yuanshen,
+                R.string.thermal_highfps,
+                R.string.thermal_charge
         };
 
         private ModeAdapter(Context context) {
@@ -330,10 +339,24 @@ public class ThermalSettingsFragment extends Fragment
             holder.title.setOnClickListener(v -> holder.mode.performClick());
             mApplicationsState.ensureIcon(entry);
             holder.icon.setImageDrawable(entry.icon);
-            int packageState = mThermalUtils.getStateForPackage(entry.info.packageName);
-            holder.mode.setSelection(packageState, false);
+
+            String pkg = entry.info.packageName;
+            int userState = mThermalUtils.getStateForPackage(pkg);
+            int effectiveState = mThermalUtils.getEffectiveStateForPackage(pkg);
+
+            // Show user-assigned state in spinner; show Default if not assigned
+            holder.mode.setSelection(userState, false);
             holder.mode.setTag(entry);
-            holder.stateIcon.setImageResource(getStateDrawable(packageState));
+
+            // State icon always shows the effective (actually applied) profile
+            holder.stateIcon.setImageResource(getStateDrawable(effectiveState));
+
+            // Dim the state icon if it's auto-detected (not user-assigned)
+            if (userState == ThermalUtils.STATE_DEFAULT && effectiveState != ThermalUtils.STATE_DEFAULT) {
+                holder.stateIcon.setAlpha(0.4f);
+            } else {
+                holder.stateIcon.setAlpha(1.0f);
+            }
         }
 
         private void setEntries(List<ApplicationsState.AppEntry> entries,
