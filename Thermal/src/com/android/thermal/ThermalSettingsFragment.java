@@ -185,17 +185,27 @@ public class ThermalSettingsFragment extends Fragment
 
     private int getStateDrawable(int state) {
         switch (state) {
+            case ThermalUtils.STATE_GAMING_HEAVY:
+                return R.drawable.ic_thermal_gaming;
+            case ThermalUtils.STATE_GAMING_MEDIUM:
+                return R.drawable.ic_thermal_gaming;
+            case ThermalUtils.STATE_GAMING_LIGHT:
+                return R.drawable.ic_thermal_gaming;
             case ThermalUtils.STATE_BENCHMARK:
                 return R.drawable.ic_thermal_benchmark;
-            case ThermalUtils.STATE_BROWSER:
-                return R.drawable.ic_thermal_browser;
             case ThermalUtils.STATE_CAMERA:
                 return R.drawable.ic_thermal_camera;
-            case ThermalUtils.STATE_DIALER:
-                return R.drawable.ic_thermal_dialer;
-            case ThermalUtils.STATE_GAMING:
-                return R.drawable.ic_thermal_gaming;
+            case ThermalUtils.STATE_CAMERA_4K:
+                return R.drawable.ic_thermal_camera;
             case ThermalUtils.STATE_STREAMING:
+                return R.drawable.ic_thermal_streaming;
+            case ThermalUtils.STATE_VIDEO_CHAT:
+                return R.drawable.ic_thermal_streaming;
+            case ThermalUtils.STATE_NAVIGATION:
+                return R.drawable.ic_thermal_navigation;
+            case ThermalUtils.STATE_PHONE:
+                return R.drawable.ic_thermal_dialer;
+            case ThermalUtils.STATE_DIALER:
                 return R.drawable.ic_thermal_streaming;
             case ThermalUtils.STATE_DEFAULT:
             default:
@@ -227,12 +237,17 @@ public class ThermalSettingsFragment extends Fragment
         private final LayoutInflater inflater;
         private final int[] items = {
                 R.string.thermal_default,
+                R.string.thermal_gaming_heavy,
+                R.string.thermal_gaming_medium,
+                R.string.thermal_gaming_light,
                 R.string.thermal_benchmark,
-                R.string.thermal_browser,
                 R.string.thermal_camera,
-                R.string.thermal_dialer,
-                R.string.thermal_gaming,
-                R.string.thermal_streaming
+                R.string.thermal_camera_4k,
+                R.string.thermal_streaming,
+                R.string.thermal_video_chat,
+                R.string.thermal_navigation,
+                R.string.thermal_phone,
+                R.string.thermal_dialer
         };
 
         private ModeAdapter(Context context) {
